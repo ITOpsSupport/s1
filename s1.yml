@@ -1,0 +1,25 @@
+---
+- hosts: sentinelone
+  become: yes
+  become_method: sudo
+  become_user: root
+  gather_facts: true
+
+  tasks:
+    - name: Copy S1 package "Signed-SentinelAgent_linux_v21_7_3_6.rpm"
+       copy:
+         src: /etc/ansible/package/s1/Signed-SentinelAgent_linux_v21_7_3_6.rpm
+         dest: /tmp/
+         owner: root
+         group: root
+         mode: 0644
+     
+     - name: Installing S1 agent
+       yum:
+         name: /tmp/Signed-SentinelAgent_linux_v21_7_3_6.rpm
+         state: present
+
+     - name: adding console key and starting agent
+       shell: 
+          - /opt/sentinelone/bin/sentinelctl management token set eyJ1cmwiOiAiaHR0cHM6Ly9hcG5lMS0xMDAxLnNlbnRpbmVsb25lLm5ldCIsICJzaXRlX2tleSI6ICJnX2RjZGQ5MDc0ODg1MDg3MjAifQ==
+          - /opt/sentinelone/bin/sentinelctl control start
